@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "ml-on-actions"
+version = "0.1.0"
+description = "An OOTB ML platform orchestrated through Github Actions"
+authors = ["Tanmay Garg <tanmay17061@gmai.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+scikit-learn = "^1.3.0"
+numpy = "^1.25.2"
+pydantic = "^2.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
