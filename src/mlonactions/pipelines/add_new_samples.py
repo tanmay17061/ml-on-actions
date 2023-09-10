@@ -5,7 +5,7 @@ from ..data import load_df_from_csv,split_df_in_ratio,merge_dfs
 def add_new_samples_pipeline(args):
     """
 
-        assumes that the files `args.src_train_data_path` and `args.src_test_data_path` already exist, onto which `args.train_data_path` and `args.test_data_path` would be appended.
+        assumes that the files `args.src_train_data_path` and `args.src_test_data_path` already exist, onto which `args.train_data_path` and `args.test_data_path` would be appended, respectively.
 
     """
 
@@ -31,5 +31,5 @@ def add_new_samples_pipeline(args):
     logging.info(f"after merging train df shape: {train_df.shape if train_df is not None else 0}")
     logging.info(f"after merging test df shape: {test_df.shape if test_df is not None else 0}")
 
-    # train_df.to_csv(args.src_train_data_path, index=False)
-    # test_df.to_csv(args.src_test_data_path, index=False)
+    train_df.to_csv(args.src_train_data_path, index=False)
+    test_df.to_csv(args.src_test_data_path, index=False)
