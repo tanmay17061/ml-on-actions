@@ -1,14 +1,17 @@
 # This is an example model implementation. The actual model architecture, hyperparameters can
 # vary per use-case basis.
 
-import logging
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+
+import logging
 import numpy as np
 
 class SVCModel:
     def __init__(self,hparams):
 
-        self.clf = SVC(hparams.C, hparams.kernel)
+        self.clf = make_pipeline(StandardScaler(), SVC(C=hparams.C, kernel=hparams.kernel))
         self.has_been_fit = False
 
     def fit(self, X: np.ndarray, y: np.ndarray):
