@@ -1,6 +1,6 @@
 import argparse
 import logging
-from pipelines import train_pipeline, add_new_samples_pipeline
+from mlonactions.pipelines import train_pipeline, add_new_samples_pipeline
 
 logging.basicConfig(level=logging.DEBUG)
 

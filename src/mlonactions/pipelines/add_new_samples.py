@@ -17,12 +17,19 @@ def add_new_samples_pipeline(args):
         new_test_df = load_df_from_csv(args.test_data_path)
     else:
         new_train_df,new_test_df = split_df_in_ratio(new_train_df,args.train_ratio)
+
+    logging.info(f"new train df shape: {new_train_df.shape if new_train_df is not None else 0}")
+    logging.info(f"new test df shape: {new_test_df.shape if new_test_df is not None else 0}")
     
     train_df = load_df_from_csv(args.src_train_data_path)
     test_df = load_df_from_csv(args.src_test_data_path)
+    logging.info(f"old train df shape: {train_df.shape if train_df is not None else 0}")
+    logging.info(f"old test df shape: {test_df.shape if test_df is not None else 0}")
 
     train_df = merge_dfs(train_df,new_train_df)
     test_df = merge_dfs(test_df,new_test_df)
+    logging.info(f"after merging train df shape: {train_df.shape if train_df is not None else 0}")
+    logging.info(f"after merging test df shape: {test_df.shape if test_df is not None else 0}")
 
-    train_df.to_csv(args.src_train_data_path, index=False)
-    test_df.to_csv(args.src_test_data_path, index=False)
+    # train_df.to_csv(args.src_train_data_path, index=False)
+    # test_df.to_csv(args.src_test_data_path, index=False)
