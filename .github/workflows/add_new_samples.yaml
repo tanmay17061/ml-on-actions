@@ -3,7 +3,8 @@ on: [push]
 branches:
   - '!master'
 paths:
-  - 'data/new_dataset/*.csv'
+  - 'data/new_dataset/*train*.csv'
+  - 'data/new_dataset/*test*.csv'
 jobs:
   add-new-samples:
     runs-on: ubuntu-latest
@@ -17,7 +18,6 @@ jobs:
           python-version: '3.9'
           miniconda-version: "latest"
           auto-activate-base: true
-      - uses: iterative/setup-cml@v1
       - name: Run add_new_samples cli command
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +36,7 @@ jobs:
           python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
           rm $filename
           done
+
       - name: Push changes to repo
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
