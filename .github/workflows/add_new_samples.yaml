@@ -1,0 +1,44 @@
+name: Add New Samples
+on: [push]
+branches:
+  - '!master'
+paths:
+  - 'data/new_dataset/*.csv'
+jobs:
+  add-new-samples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: '3.9'
+      - uses: iterative/setup-cml@v1
+      - name: Run add_new_samples cli command
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          conda install git pip
+          pip install poetry
+          poetry install
+          for filename in data/new_dataset/*train*.csv;
+          do
+          python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
+          rm $filename
+          done
+
+          for filename in data/new_dataset/*test*.csv;
+          do
+          python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
+          rm $filename
+          done
+      - name: Push changes to repo
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Merge csv files from data/new_dataset/ into csv_files in data/dataset/train.csv or /dataset/test.csv"
