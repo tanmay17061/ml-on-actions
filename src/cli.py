@@ -11,6 +11,8 @@ def build_train_subparser(parser):
 def build_add_new_samples_parser(parser):
     parser.add_argument("--train_data_path", type=str, help="path of new train dataset.")
     parser.add_argument("--test_data_path", type=str, help="path of new test dataset.")
+    parser.add_argument("--src_train_data_path", type=str, help="path of original train dataset.")
+    parser.add_argument("--src_test_data_path", type=str, help="path of original test dataset.")
     parser.add_argument("--train_ratio", type=float, help="ratio of train-split in train-test. eg- set this as `1` to remove test or `0` to remove train.")
 
 def main():
