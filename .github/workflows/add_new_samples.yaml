@@ -15,21 +15,24 @@ jobs:
           python-version: '3.9'
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          auto-update-conda: true
           python-version: '3.9'
           miniconda-version: "latest"
-          auto-activate-base: true
+          auto-activate-base: false
           activate-environment: condaenv
       - name: Run add_new_samples cli command
+        shell: bash -el {0}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
         run: |
-          # conda create -n ml-on-actions python=3.9 -y
-          conda activate codaenv
           conda info
           conda env list
-          conda install git pip
-          pip install poetry
-          poetry install
+          conda install git pip poetry
+          which pip3
+          poetry install -vvv
           for filename in data/new_dataset/*train*.csv;
           do
           python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
