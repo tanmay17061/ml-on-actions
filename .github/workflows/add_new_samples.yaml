@@ -18,13 +18,13 @@ jobs:
           python-version: '3.9'
           miniconda-version: "latest"
           auto-activate-base: true
-          activate-environment: true
+          activate-environment: condaenv
       - name: Run add_new_samples cli command
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # conda create -n ml-on-actions python=3.9 -y
-          # conda activate ml-on-actions
+          conda activate codaenv
           conda info
           conda env list
           conda install git pip
