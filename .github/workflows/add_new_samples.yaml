@@ -59,3 +59,4 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit -m "Merge csv files from data/new_dataset/ into csv_files in data/dataset/train.csv or /dataset/test.csv"
+          git push
