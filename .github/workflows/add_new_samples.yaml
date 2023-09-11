@@ -1,10 +1,11 @@
 name: Add New Samples
-on: [push]
-branches:
-  - '!master'
-paths:
-  - 'data/new_dataset/*train*.csv'
-  - 'data/new_dataset/*test*.csv'
+on:
+  push:
+    branches:
+      - '!master'
+    paths:
+      - 'data/new_dataset/*train*.csv'
+      - 'data/new_dataset/*test*.csv'
 jobs:
   add-new-samples:
     runs-on: ubuntu-latest
@@ -18,10 +19,15 @@ jobs:
           python-version: '3.9'
           miniconda-version: "latest"
           auto-activate-base: true
+          activate-environment: true
       - name: Run add_new_samples cli command
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # conda create -n ml-on-actions python=3.9 -y
+          # conda activate ml-on-actions
+          conda info
+          conda env list
           conda install git pip
           pip install poetry
           poetry install
