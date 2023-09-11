@@ -35,16 +35,20 @@ jobs:
           poetry install -vvv
           for filename in data/new_dataset/*train*.csv;
           do
-            echo "adding samples from file ($filename) to train split"
-            python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
-            rm $filename
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to train split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
+              rm $filename
+            fi
           done
 
           for filename in data/new_dataset/*test*.csv;
           do
-            echo "adding samples from file ($filename) to test split"
-            python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
-            rm $filename
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to test split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
+              rm $filename
+            fi
           done
 
       - name: Push changes to repo
