@@ -1,11 +1,10 @@
 name: Add New Samples
 on:
   push:
-    branches:
-      - '!master'
+    branches-ignore:
+      - master
     paths:
-      - 'data/new_dataset/*train*.csv'
-      - 'data/new_dataset/*test*.csv'
+      - 'data/new_dataset/**'
 jobs:
   add-new-samples:
     runs-on: ubuntu-latest
