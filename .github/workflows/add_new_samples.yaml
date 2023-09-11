@@ -7,6 +7,7 @@ on:
       - 'data/new_dataset/**'
 jobs:
   add-new-samples:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
