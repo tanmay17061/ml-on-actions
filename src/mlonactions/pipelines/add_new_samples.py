@@ -9,8 +9,8 @@ def add_new_samples_pipeline(args):
 
     """
 
-    if bool(args.test_data_path) == bool(args.train_ratio):
-        raise ValueError(f"exactly one of {args.test_data_path=} or {args.train_ratio} should be provided")
+    if bool(args.test_data_path) == (args.train_ratio is not None):
+        raise ValueError(f"exactly one of {args.test_data_path=} or {args.train_ratio=} should be provided")
     
     new_train_df = load_df_from_csv(args.train_data_path)
     if args.test_data_path:

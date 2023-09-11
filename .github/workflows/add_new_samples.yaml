@@ -1,13 +1,14 @@
 name: Add New Samples
 on:
-  push:
-    branches:
-      - '!master'
+  pull_request:
+    types: [opened, reopened]
+    branches-ignore:
+      - master
     paths:
-      - 'data/new_dataset/*train*.csv'
-      - 'data/new_dataset/*test*.csv'
+      - 'data/new_dataset/**'
 jobs:
   add-new-samples:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,31 +17,40 @@ jobs:
           python-version: '3.9'
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          auto-update-conda: true
           python-version: '3.9'
           miniconda-version: "latest"
-          auto-activate-base: true
-          activate-environment: true
+          auto-activate-base: false
+          activate-environment: condaenv
       - name: Run add_new_samples cli command
+        shell: bash -el {0}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
         run: |
-          # conda create -n ml-on-actions python=3.9 -y
-          # conda activate ml-on-actions
           conda info
           conda env list
-          conda install git pip
-          pip install poetry
-          poetry install
+          conda install git pip poetry
+          which pip3
+          poetry install -vvv
           for filename in data/new_dataset/*train*.csv;
           do
-          python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
-          rm $filename
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to train split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
+              rm $filename
+            fi
           done
 
           for filename in data/new_dataset/*test*.csv;
           do
-          python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
-          rm $filename
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to test split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
+              rm $filename
+            fi
           done
 
       - name: Push changes to repo
@@ -51,3 +61,4 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit -m "Merge csv files from data/new_dataset/ into csv_files in data/dataset/train.csv or /dataset/test.csv"
+          git push

@@ -24,7 +24,17 @@ def load_npy_from_csv(csv_path):
 
 
 def split_df_in_ratio(df, split_ratio):
+
+    if split_ratio == 0.0:
+        # sklearn's train_test_split does not work when split_ratio = 0.0
+        return None, df
+    if split_ratio == 1.0:
+        # sklearn's train_test_split does not work when split_ratio = 1.0
+        return df, None
+
     df1,df2 = train_test_split(df, train_size=split_ratio, shuffle=False)
+
     if len(df1) == 0: df1 = None
     if len(df2) == 0: df2 = None
+
     return df1,df2
