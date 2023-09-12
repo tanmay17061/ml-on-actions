@@ -1,11 +1,10 @@
 name: Add New Samples
 on:
-  pull_request:
-    types: [opened, reopened]
+  push:
     branches-ignore:
       - master
     paths:
-      - 'data.dvc'
+      - '**.dvc'
 jobs:
   add-new-samples:
     permissions: write-all
@@ -22,7 +21,7 @@ jobs:
           miniconda-version: "latest"
           auto-activate-base: false
           activate-environment: condaenv
-      - name: Run add_new_samples cli command
+      - name: Run add_new_samples cli command and push to DVC repo
         shell: bash -el {0}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,8 +55,10 @@ jobs:
               rm $filename
             fi
           done
+          dvc add data
+          dvc push data
 
-      - name: Push changes to repo
+      - name: Push changes to the Git repo
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
