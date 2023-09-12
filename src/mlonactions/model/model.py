@@ -9,9 +9,9 @@ import logging
 import numpy as np
 
 class SVCModel:
-    def __init__(self,hparams):
+    def __init__(self):
 
-        self.clf = make_pipeline(StandardScaler(), SVC(C=hparams.C, kernel=hparams.kernel))
+        self.clf = make_pipeline(StandardScaler(), SVC())
         self.has_been_fit = False
 
     def fit(self, X: np.ndarray, y: np.ndarray):

@@ -5,8 +5,9 @@ from mlonactions.pipelines import train_pipeline, add_new_samples_pipeline
 logging.basicConfig(level=logging.DEBUG)
 
 def build_train_subparser(parser):
-    parser.add_argument("--data_path", type=str, help="path of train+val dataset", required=True)
-    parser.add_argument("--train_ratio", type=float, help="ratio of train-split in train-val. eg- set this as 1 to remove validation.", required=True)
+    parser.add_argument("--train_data_path", type=str, help="path of train dataset.", default="")
+    parser.add_argument("--test_data_path", type=str, help="path of test dataset.", required=True)
+    parser.add_argument("--model_pickle_path", type=str, help="path to: 1. save model at if `train_data_path` is provided, or, 2. load model from for testing.", required=True)
 
 def build_add_new_samples_parser(parser):
     parser.add_argument("--train_data_path", type=str, help="path of new train dataset.")
