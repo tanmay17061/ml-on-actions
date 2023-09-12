@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - master
     paths:
-      - 'data.dvc'
+      - '**.dvc'
 jobs:
   add-new-samples:
     permissions: write-all
