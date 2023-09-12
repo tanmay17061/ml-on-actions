@@ -1,7 +1,6 @@
 name: Add New Samples
 on:
-  pull_request:
-    types: [opened, reopened]
+  push:
     branches-ignore:
       - master
     paths:
