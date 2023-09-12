@@ -21,7 +21,7 @@ jobs:
           miniconda-version: "latest"
           auto-activate-base: false
           activate-environment: condaenv
-      - name: Run add_new_samples cli command
+      - name: Run add_new_samples cli command and push to DVC repo
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -57,7 +57,7 @@ jobs:
           dvc add data
           dvc push data
 
-      - name: Push changes to DVC and Git repos
+      - name: Push changes to the Git repo
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
