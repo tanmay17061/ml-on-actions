@@ -1,6 +1,7 @@
 name: Add New Samples
 on:
-  push:
+  pull_request:
+    types: [opened, reopened]
     branches-ignore:
       - master
     paths:
@@ -56,10 +57,12 @@ jobs:
             fi
           done
 
-      - name: Push changes to repo
+      - name: Push changes to DVC and Git repos
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          dvc add data
+          dvc push data
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
