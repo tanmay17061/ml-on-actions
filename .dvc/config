@@ -2,4 +2,4 @@
     remote = myremote
     autostage = true
 ['remote "myremote"']
-    url = gdrive://18L-05Mvw4WZpmum_j6GgYAdAvKX9HGM5
+    url = s3://tanmay17061/ml-on-actions-data/

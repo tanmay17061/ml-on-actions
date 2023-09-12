@@ -12,7 +12,7 @@ numpy = "^1.25.2"
 pydantic = "^2.3.0"
 pandas = "^2.1.0"
 dvc = "^3.19.0"
-dvc-gdrive = "^2.20.0"
+dvc-s3 = "^2.23.0"
 
 
 [build-system]

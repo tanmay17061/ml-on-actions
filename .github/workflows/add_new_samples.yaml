@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - master
     paths:
-      - 'data/new_dataset/**'
+      - 'data.dvc'
 jobs:
   add-new-samples:
     permissions: write-all
@@ -26,6 +26,9 @@ jobs:
         shell: bash -el {0}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_URI_FOR_DVC: ${{ secrets.S3_URI_FOR_DVC }}
           LC_ALL: C.UTF-8
           LANG: C.UTF-8
           LANGUAGE: C.UTF-8
@@ -34,7 +37,8 @@ jobs:
           conda env list
           conda install git pip poetry
           which pip3
-          poetry install -vvv
+          poetry install
+          dvc pull data
           for filename in data/new_dataset/*train*.csv;
           do
             if test -f $filename; then
