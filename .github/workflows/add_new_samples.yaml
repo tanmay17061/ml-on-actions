@@ -22,6 +22,7 @@ jobs:
           auto-activate-base: false
           activate-environment: condaenv
       - name: Run add_new_samples cli command and push to DVC repo
+        shell: bash -el {0}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
