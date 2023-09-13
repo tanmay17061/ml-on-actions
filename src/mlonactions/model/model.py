@@ -15,11 +15,13 @@ class SVCModel:
         self.has_been_fit = False
 
     def fit(self, X: np.ndarray, y: np.ndarray):
-
+        logging.info(f"SVCModel.fit called on {X.shape=} and {y.shape=}")
         if self.has_been_fit:
             logging.warn(f"calling fit on an already fitted {self.__class__.__name__} object.")
 
         self.clf.fit(X,y)
+        self.has_been_fit = True
+        logging.info(f"SVCModel.fit called on {X.shape=} and {y.shape=}")
     
     def predict(self,X: np.ndarray):
 

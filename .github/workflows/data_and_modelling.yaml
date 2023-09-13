@@ -108,6 +108,7 @@ jobs:
             echo "training a new model on data/dataset/train.csv"
 
             if test -f data/model/model.joblib; then
+              echo "model file already exists, generating metrics on this old model"
               python src/cli.py train --train_data_path data/dataset/train.csv --test_data_path data/dataset/test.csv --model_joblib_path data/model/model.joblib
 
               echo "# Old Model" >> report.md
@@ -121,6 +122,8 @@ jobs:
               echo "```" >> report.md
 
               rm data/model/model.joblib
+            else
+              echo "model file does not exist already, skipping generating metrics on an old model"
             fi
 
             python src/cli.py train --train_data_path data/dataset/train.csv --test_data_path data/dataset/test.csv --model_joblib_path data/model/model.joblib
