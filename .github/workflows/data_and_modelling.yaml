@@ -59,7 +59,6 @@ jobs:
           dvc push data
 
       - name: Push changes to the Git repo
-        continue-on-error: true
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
