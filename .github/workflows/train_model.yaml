@@ -1,0 +1,88 @@
+name: Train new model
+on:
+  push:
+    branches-ignore:
+      - master
+    paths:
+      - '**.dvc'
+jobs:
+  train-model-on-data-dvc-update:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: iterative/setup-cml@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: '3.9'
+          miniconda-version: "latest"
+          auto-activate-base: false
+          activate-environment: condaenv
+      - name: Run train cli command and push new model to DVC repo
+        shell: bash -el {0}
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_URI_FOR_DVC: ${{ secrets.S3_URI_FOR_DVC }}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
+        run: |
+          conda info
+          conda env list
+          conda install git pip poetry
+          poetry install
+          dvc pull data
+
+          touch report.md
+
+          if test -f data/dataset/train.csv; then
+            echo "training a new model on data/dataset/train.csv"
+
+            if test -f data/model/model.joblib; then
+              python src/cli.py train --train_data_path data/dataset/train.csv --test_data_path data/dataset/test.csv --model_joblib_path data/model/model.joblib
+
+              echo "# Old Model" >> report.md
+              echo "## Train Metrics" >> report.md
+              echo "```" >> report.md
+              cat train_report.txt >> report.md
+              echo "```" >> report.md
+              echo "## Test Metrics" >> report.md
+              echo "```" >> report.md
+              cat test_report.txt >> report.md
+              echo "```" >> report.md
+
+              rm data/model/model.joblib
+            fi
+
+            python src/cli.py train --train_data_path data/dataset/train.csv --test_data_path data/dataset/test.csv --model_joblib_path data/model/model.joblib
+
+            echo "# New Model" >> report.md
+            echo "## Train Metrics" >> report.md
+            echo "```" >> report.md
+            cat train_report.txt >> report.md
+            echo "```" >> report.md
+            echo "## Test Metrics" >> report.md
+            echo "```" >> report.md
+            cat test_report.txt >> report.md
+            echo "```" >> report.md
+            cml comment create report.md
+
+            dvc add data
+            dvc push data
+          fi
+
+      - name: Push changes to the Git repo
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add data.dvc
+          git commit -m "Train a new model from csv_files in data/dataset/train.csv"
+          git push
