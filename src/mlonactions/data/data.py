@@ -20,7 +20,7 @@ def load_npy_from_csv(csv_path):
     df = load_df_from_csv(csv_path)
     y = df["quality"]
     df = df.drop(["quality"], axis=1)
-    return df.to_numpy, y.to_numpy, list(df.columns)
+    return df.to_numpy(), y.to_numpy(), list(df.columns)
 
 
 def split_df_in_ratio(df, split_ratio):
