@@ -117,13 +117,13 @@ jobs:
 
               echo "# Old Model" >> report.md
               echo "## Train Metrics" >> report.md
-              echo "```" >> report.md
+              echo "\`\`\`" >> report.md
               cat train_report.txt >> report.md
-              echo "```" >> report.md
+              echo "\`\`\`" >> report.md
               echo "## Test Metrics" >> report.md
-              echo "```" >> report.md
+              echo "\`\`\`" >> report.md
               cat test_report.txt >> report.md
-              echo "```" >> report.md
+              echo "\`\`\`" >> report.md
 
               echo "Train report:"
               cat train_report.txt
@@ -139,13 +139,13 @@ jobs:
 
             echo "# New Model" >> report.md
             echo "## Train Metrics" >> report.md
-            echo "```" >> report.md
+            echo "\`\`\`" >> report.md
             cat train_report.txt >> report.md
-            echo "```" >> report.md
+            echo "\`\`\`" >> report.md
             echo "## Test Metrics" >> report.md
-            echo "```" >> report.md
+            echo "\`\`\`" >> report.md
             cat test_report.txt >> report.md
-            echo "```" >> report.md
+            echo "\`\`\`" >> report.md
             cml comment create report.md
 
             dvc add data
