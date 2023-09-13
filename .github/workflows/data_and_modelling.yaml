@@ -110,7 +110,7 @@ jobs:
             if ! test -d data/model; then
               mkdir data/model
             fi
-            
+
             if test -f data/model/model.joblib; then
               echo "model file already exists, generating metrics on this old model"
               python src/cli.py train --train_data_path data/dataset/train.csv --test_data_path data/dataset/test.csv --model_joblib_path data/model/model.joblib
@@ -124,6 +124,11 @@ jobs:
               echo "```" >> report.md
               cat test_report.txt >> report.md
               echo "```" >> report.md
+
+              echo "Train report:"
+              cat train_report.txt
+              echo "Test report:"
+              cat test_report.txt
 
               rm data/model/model.joblib
             else
