@@ -1,4 +1,4 @@
-name: Train new model
+name: Data and Modelling
 on:
   push:
     branches-ignore:
@@ -6,7 +6,71 @@ on:
     paths:
       - '**.dvc'
 jobs:
+  add-new-samples:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: '3.9'
+          miniconda-version: "latest"
+          auto-activate-base: false
+          activate-environment: condaenv
+      - name: Run add_new_samples cli command and push to DVC repo
+        shell: bash -el {0}
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_URI_FOR_DVC: ${{ secrets.S3_URI_FOR_DVC }}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
+        run: |
+          conda info
+          conda env list
+          conda install git pip poetry
+          which pip3
+          poetry install
+          dvc pull data
+          for filename in data/new_dataset/*train*.csv;
+          do
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to train split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 1.0
+              rm $filename
+            fi
+          done
+
+          for filename in data/new_dataset/*test*.csv;
+          do
+            if test -f $filename; then
+              echo "adding samples from file ($filename) to test split"
+              python src/cli.py add_new_samples --src_train_data_path data/dataset/train.csv --src_test_data_path data/dataset/test.csv --train_data_path $filename --train_ratio 0.0
+              rm $filename
+            fi
+          done
+          dvc add data
+          dvc push data
+
+      - name: Push changes to the Git repo
+        continue-on-error: true
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Merge csv files from data/new_dataset/ into csv_files in data/dataset/train.csv or /dataset/test.csv"
+          git push
   train-model-on-data-dvc-update:
+    if: ${{ !cancelled() }}
+    needs: add-new-samples
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
