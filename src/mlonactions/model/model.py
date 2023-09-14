@@ -23,7 +23,7 @@ class SVCModel:
         self.has_been_fit = True
         logging.info(f"SVCModel.fit called on {X.shape=} and {y.shape=}")
     
-    def predict(self,X: np.ndarray):
+    def predict(self, X: np.ndarray):
 
         if not self.has_been_fit:
             raise ValueError(f"calling predict on {self.__class__.__name__} object without calling fit first.")
