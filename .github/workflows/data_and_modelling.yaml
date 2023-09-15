@@ -91,7 +91,6 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_URI_FOR_DVC: ${{ secrets.S3_URI_FOR_DVC }}
           LC_ALL: C.UTF-8
           LANG: C.UTF-8
           LANGUAGE: C.UTF-8
