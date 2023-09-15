@@ -1,0 +1,47 @@
+name: Docker Image Build and Publish to ECR
+on:
+  push:
+    branches:
+      - master
+      - dev/docker-build-and-publish
+jobs:
+  docker-image-build-and-publish-ecr:
+    permissions: read-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: '3.9'
+          miniconda-version: "latest"
+          auto-activate-base: false
+          activate-environment: condaenv
+      - name: DVC pull data, build docker image and push to ECR repo
+        shell: bash -el {0}
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
+        run: |
+          conda info
+          conda env list
+          conda install git pip poetry
+          
+          which pip3
+          poetry install
+          dvc pull data
+          
+          docker build -t tanmay17061/mlonactions-http-server:latest --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY .
+          
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 037513749442.dkr.ecr.ap-south-1.amazonaws.com
+          
+          docker tag tanmay17061/mlonactions-http-server:latest 037513749442.dkr.ecr.ap-south-1.amazonaws.com/tanmay17061/mlonactions-http-server:latest
+
+          docker push 037513749442.dkr.ecr.ap-south-1.amazonaws.com/tanmay17061/mlonactions-http-server:latest
