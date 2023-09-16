@@ -6,7 +6,61 @@ on:
     paths:
       - '**.dvc'
 jobs:
+  monitor-and-test-new-samples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: iterative/setup-cml@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: '3.9'
+          miniconda-version: "latest"
+          auto-activate-base: false
+          activate-environment: condaenv
+      - name: Generate monitoring reports and carry out tests on new dataset and the existing model
+        shell: bash -el {0}
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          RUN_ID: ${{github.run_id}}
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          LANGUAGE: C.UTF-8
+        run: |
+          conda info
+          conda env list
+          conda install git pip poetry
+          poetry install
+          dvc pull data
+
+          touch report.md
+
+          if test -f data/new_dataset/train.csv; then
+            echo "monitoring and testing new train dataset (data/new_dataset/train.csv) against existing (reference) dataset (data/dataset/train.csv) and model (data/model/model.joblib)"
+
+            python src/cli.py data_and_model_monitoring --reference_data_path data/dataset/train.csv --current_data_path data/new_dataset/train.csv --model_joblib_path data/model/model.joblib
+
+            
+            aws s3 cp monitoring_report.html s3://tanmay17061/ml-on-actions-monitoring-and-test-reports/${RUN_ID}/new_train/
+            aws s3 cp testing_report.html s3://tanmay17061/ml-on-actions-monitoring-and-test-reports/${RUN_ID}/new_train/
+          fi
+
+          if test -f data/new_dataset/test.csv; then
+            echo "monitoring and testing new test dataset (data/new_dataset/test.csv) against existing (reference) dataset (data/dataset/train.csv) and model (data/model/model.joblib)"
+
+            python src/cli.py data_and_model_monitoring --reference_data_path data/dataset/train.csv --current_data_path data/new_dataset/test.csv --model_joblib_path data/model/model.joblib
+
+            
+            aws s3 cp monitoring_report.html s3://tanmay17061/ml-on-actions-monitoring-and-test-reports/${RUN_ID}/new_test/
+            aws s3 cp testing_report.html s3://tanmay17061/ml-on-actions-monitoring-and-test-reports/${RUN_ID}/new_test/
+          fi
   add-new-samples:
+    needs: monitor-and-test-new-samples
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
