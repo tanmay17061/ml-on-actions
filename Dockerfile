@@ -20,7 +20,7 @@ RUN conda update -y conda
 ARG PY_VER
 
 RUN conda install -c anaconda -y python=${PY_VER} && conda init bash
-RUN conda install git pip poetry
+RUN conda install git pip poetry evidently
 RUN conda info && which pip && which poetry
 
 ADD . repository/

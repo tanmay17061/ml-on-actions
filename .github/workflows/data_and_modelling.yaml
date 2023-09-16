@@ -34,7 +34,7 @@ jobs:
         run: |
           conda info
           conda env list
-          conda install git pip poetry
+          conda install git pip poetry evidently
           poetry install
           dvc pull data
 
