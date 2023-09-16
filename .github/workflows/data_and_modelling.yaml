@@ -34,7 +34,8 @@ jobs:
         run: |
           conda info
           conda env list
-          conda install git pip poetry evidently
+          conda install git pip poetry
+          conda install -c conda-forge evidently
           poetry install
           dvc pull data
 
