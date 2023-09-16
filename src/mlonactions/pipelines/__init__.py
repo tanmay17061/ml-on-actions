@@ -1,3 +1,3 @@
 from .train import train_pipeline
 from .add_new_samples import add_new_samples_pipeline
-from .data_and_model_monitoring import data_and_model_monitoring_pipeline
+from .data_and_model_monitoring_and_testing import data_and_model_monitoring_and_testing_pipeline
